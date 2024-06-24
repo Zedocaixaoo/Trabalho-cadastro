@@ -8,7 +8,7 @@ def cadastro():
     hash_senha = hashlib.sha256(senha.encode()).hexdigest()
 
     with open("usuarios.txt", "a") as arquivo:
-        arquivo.write(f"{nome}, {CPF}, {hash_senha}\n")
+        arquivo.write(f"{nome},{CPF},{hash_senha}\n")
 
     print("Usuario cadastrado com sucesso\n")
 
@@ -18,11 +18,6 @@ def adicionar_usuario():
         continuar = input("Deseja cadastrar outro usuario (s/n): ")
         if continuar.lower() != 's':
             break
-
-adicionar_usuario()
-
-
-import hashlib
 
 def login():
     cpf = input("Digite seu CPF: ")
@@ -35,16 +30,25 @@ def login():
 
     for linha in linhas:
         dados = linha.strip().split(',')
-        if dados[1] == cpf and dados[2] == hash_senha:
+        if dados[1] == cpf and dados[2].strip() == hash_senha:
             print(f"Bem-vindo, {dados[0]}!\n")
             return True
         
     print("CPF ou senha incorretos. Tente novamente.\n")
     return False
 
-while True:
-    if login():
-        break
+def main():
+    print("Quitanda Jurandir")
+    escolha = input("Você já tem um cadastro? (s/n): ")
+    if escolha.lower() == 's':
+        while True:
+            if login():
+                break
+    else:
+        adicionar_usuario()
+        while True:
+            if login():
+                break
 
-
-
+if __name__ == "__main__":
+    main()
