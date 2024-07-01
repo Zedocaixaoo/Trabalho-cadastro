@@ -56,24 +56,44 @@ def selecionar_pagamento():
     print("4 - Xerecard")
     print("5 - Boleto Bancário")
     print("6 - Fiado")
-    escolha = input("Selecione a forma de pagamento: ")
-    
-    formas_pagamento = {
-        "1": "Dinheiro",
-        "2": "Cartão de Crédito",
-        "3": "Cartão de Débito",
-        "4": "Xerecard",
-        "5": "Boleto Bancário",
-        "6": "Fiado",
-    }
+    escolha = input("Selecione a forma de pagamento: ") 
 
-    if escolha == "4":
-        dia_pagamento = input("Digite o dia do pagamento (DD/MM/YYYY): ")
+    if escolha == "1":
+        return "Dinheiro"
+    elif escolha == "2":
+        return "Cartão de Crédito"
+    elif escolha == "3":
+        return "Cartão de Débito"
+    elif escolha == "4":
+        dia_pagamento = input("Digite o dia do pagamento (DD/MM/AAAA): ")
         hora_pagamento = input("Digite a hora do pagamento (HH:MM): ")
         print("Endereço: Rua Dr. Creme, 666, Xique-Xique BA.")
         print("Referência: Na Frente do Cemitério de Xique-Xique.")
+        return "Xerecard"
+    elif escolha == "5":
+        return "Boleto Bancário"
+    elif escolha == "6":
+        nota_pagamento = print("O Pagamento deve ser realizado no prazo de uma semana!")
+        dia_pagamento = input("Qual o dia de pagamento? (DD/MM/AAAA): ")
+        return fiado_pagamento()
+    
+def fiado_pagamento():
+            print("Formas de pagamento disponíveis:")
+            print("1 - Dinheiro")
+            print("2 - Cartão de Crédito")
+            print("3 - Cartão de Débito")
+            print("4 - Boleto Bancário")
+            
+            escolha = input("Selecione a forma de pagamento: ")
 
-    return formas_pagamento.get(escolha, "Desconhecida")
+            if escolha == "1":
+                return "Fiado=Dinheiro"
+            elif escolha == "2":
+                return "Fiado=Cartão de Crédito"
+            elif escolha == "3":
+                return "Fiado=Cartão de Débito"
+            elif escolha == "4":
+                return "Fiado=Boleto Bancário"
 
 def sistema_de_compras(itens_disponiveis, historico_compras):
     carrinho = []
