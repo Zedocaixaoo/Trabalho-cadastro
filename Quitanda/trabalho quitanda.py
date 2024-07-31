@@ -126,7 +126,7 @@ def sistema_de_compras(itens_disponiveis, historico_compras):
         with open("historico_compras.txt", "a") as arquivo:
             arquivo.write(f"{data_hora},{total:.2f},{forma_pagamento}\n")
             for item in carrinho:
-                arquivo.write(f",{item['nome']},{item['preco']:.2f}\n")
+                arquivo.write(f"{item['nome']},{item['preco']:.2f}\n")
     else:
         print("Nenhum item no carrinho.\n")
 
@@ -164,7 +164,7 @@ def carregar_historico():
     try:
         with open("historico_compras.txt", "r") as arquivo:
             linhas = arquivo.readlines()
-            compra_atual = {}
+            compra_atual = None
             for linha in linhas:
                 dados = linha.strip().split(',')
                 if len(dados) == 3:
@@ -173,12 +173,12 @@ def carregar_historico():
                         "total": float(dados[1]),
                         "forma_pagamento": dados[2]
                     }
-                    historico_compras.append(compra_atual)
                     compra_atual["itens"] = []
-                else:
+                    historico_compras.append(compra_atual)
+                elif len(dados) == 2:
                     compra_atual["itens"].append({
-                        "nome": dados[1],
-                        "preco": float(dados[2])
+                        "nome": dados[0],
+                        "preco": float(dados[1])
                     })
     except FileNotFoundError:
         pass
