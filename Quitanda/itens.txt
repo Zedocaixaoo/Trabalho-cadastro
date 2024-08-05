@@ -1,0 +1,10 @@
+1,Sabão em Pó (1kg),9.15
+2,Sabonete,2.45
+3,Shampoo (400ml),11.54
+4,Condicionador,11.45
+5,Pasta de Dente,5.55
+6,Escova de Dentes,6.78
+7,Papel Higienico (4r),18.9
+8,Papel Higienico,1.5
+9,Toalha de Papel (2r),6.7
+10,Detergente Liquido (500ml),2.5
