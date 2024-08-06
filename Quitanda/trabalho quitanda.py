@@ -1,11 +1,19 @@
 import hashlib
 import datetime
 import random
+import time
+import sys
 
 def cadastro():
-    nome = input("Digite o nome de usuario: ")
-    CPF = input("Digite o cpf de usuario: ")
-    senha = input("Digite a senha: ")
+    print("então vamos fazer.")
+    for i in range(5):  
+        sys.stdout.write("\rloading" + "." * (i + 1) + "")
+        sys.stdout.flush()
+        time.sleep(0.5)  
+    print("\n")
+    nome = input("crie um nome de usuario: ")
+    CPF = input("Digite seu cpf: ")
+    senha = input("Crie uma senha: ")
 
     hash_senha = hashlib.sha256(senha.encode()).hexdigest()
 
@@ -205,6 +213,11 @@ def main():
                 break
 
     while True:
+        for i in range(5):  
+            sys.stdout.write("\rloading" + "." * (i + 1) + "")
+            sys.stdout.flush()
+            time.sleep(0.5)  
+        print("\n")
         print("\nMenu:")
         print("1 - Fazer compra")
         print("2 - Exibir histórico de compras")
