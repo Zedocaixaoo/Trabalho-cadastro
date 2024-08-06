@@ -5,6 +5,7 @@ import time
 import sys
 
 def cadastro():
+    
     print("então vamos fazer.")
     for i in range(5):  
         sys.stdout.write("\rloading" + "." * (i + 1) + "")
@@ -12,9 +13,19 @@ def cadastro():
         time.sleep(0.5)  
     print("\n")
     nome = input("crie um nome de usuario: ")
-    CPF = input("Digite seu cpf: ")
-    senha = input("Crie uma senha: ")
 
+    CPF = ""
+    while True:
+        CPF = input("Digite seu cpf (XXX.XXX.XXX-XX): ")
+        CPF = CPF.replace('.', '').replace('-', '')
+        if CPF.isdigit() and len(CPF) == 11:
+            CPF_formatado = "{}.{}.{}-{}".format(CPF[:3], CPF[3:6], CPF[6:9], CPF[9:])
+            print("CPF:", CPF_formatado)
+            break
+        else:
+            print("CPF inválido. Digite novamente.")
+    
+    senha = input("Crie uma senha: ")
     hash_senha = hashlib.sha256(senha.encode()).hexdigest()
 
     with open("usuarios.txt", "a") as arquivo:
@@ -30,7 +41,7 @@ def adicionar_usuario():
             break
 
 def login():
-    cpf = input("Digite seu CPF: ")
+    CPF = input("Digite seu CPF: ")
     senha = input("Senha: ")
 
     hash_senha = hashlib.sha256(senha.encode()).hexdigest()
@@ -40,7 +51,7 @@ def login():
 
     for linha in linhas:
         dados = linha.strip().split(',')
-        if dados[1] == cpf and dados[2].strip() == hash_senha:
+        if dados[1] == CPF and dados[2].strip() == hash_senha:
             print(f"Bem-vindo {dados[0]}!\n")
             return dados[0]
     
