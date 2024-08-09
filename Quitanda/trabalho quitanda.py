@@ -32,16 +32,33 @@ def cadastro():
         arquivo.write(f"{nome},{CPF},{hash_senha}\n")
 
     print("Usuario cadastrado com sucesso\n")
+    adicionar_usuario()
 
 def adicionar_usuario():
     while True:
-        cadastro()
         continuar = input("Deseja cadastrar outro usuario (s/n): ")
-        if continuar.lower()!= '':
+        if continuar.lower() == 's':
+            while True:
+              cadastro()
+              break
+        elif continuar.lower() == 'n':
+            print("Login: ")
+            login()
             break
+        else:
+            print("caractere não indicado. ")
+            adicionar_usuario()
+            return
 
 def login():
-    CPF = input("Digite seu CPF: ")
+    CPF = input("digite seu CPF (XXX.XXX.XXX-XX): ")
+    CPF = CPF.replace('.', '').replace('-', '')
+    if CPF.isdigit() and len(CPF) == 11:
+        CPF_formatado = "{}.{}.{}-{}".format(CPF[:3], CPF[3:6], CPF[6:9], CPF[9:])
+        print("CPF:", CPF_formatado)
+    else:
+        print("CPF inválido. digite novamente.")
+        return None
     senha = input("Senha: ")
 
     hash_senha = hashlib.sha256(senha.encode()).hexdigest()
@@ -216,12 +233,16 @@ def main():
             usuario = login()
             if usuario:
                 break
-    else:
-        adicionar_usuario()
+    elif escolha.lower() == 'n':
+        cadastro()
         while True:
             usuario = login()
-            if usuario:
-                break
+            break
+    else:
+        print("caractere não indicado. ")
+        while True:
+          main()
+          break
 
     while True:
         for i in range(5):  
