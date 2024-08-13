@@ -93,14 +93,45 @@ def temcadastro():
         temcadastro()
 
 def adicionar_item(itens_disponiveis):
-    nome = input("Nome do item: ")
-    preco = float(input("Preço do item: "))
+    nome = input("nome do item: ")
+    while True:
+        preco_str = input("preço do item: ")
+        try:
+            preco = float(preco_str)
+            break
+        except ValueError:
+            print("valor invalido. digite um número decimal (ex: 10.99).")
+    
     codigo = str(len(itens_disponiveis) + 1)
     itens_disponiveis[codigo] = {"nome": nome, "preco": preco}
-    print(f"Item {nome} adicionado com sucesso.\n")
+    print(f"item {nome} adicionado com sucesso.\n")
     with open("itens.txt", "w") as arquivo:
         for codigo, item in itens_disponiveis.items():
             arquivo.write(f"{codigo},{item['nome']},{item['preco']}\n")
+            
+def remover_item(itens_disponiveis):
+    usuario = login()
+    if usuario != "Jurandir":
+        print("você não tem permissão para remover itens.")
+        return
+
+    print("\nitens disponíveis:")
+    for codigo, item in itens_disponiveis.items():
+        print(f"{codigo} - {item['nome']} - R${item['preco']:.2f}")
+
+    while True:
+        codigo_remover = input("digite o código do item que deseja remover (ou 'sair' para cancelar): ")
+        if codigo_remover.lower() == 'sair':
+            break
+        elif codigo_remover in itens_disponiveis:
+            del itens_disponiveis[codigo_remover]
+            print(f"item {itens_disponiveis[codigo_remover]['nome']} removido com sucesso.\n")
+            with open("itens.txt", "w") as arquivo:
+                for codigo, item in itens_disponiveis.items():
+                    arquivo.write(f"{codigo},{item['nome']},{item['preco']}\n")
+            break
+        else:
+            print("Código inexistente. Tente novamente.\n")
 
 def selecionar_pagamento():
     print("formas de pagamento disponíveis:")
@@ -295,7 +326,8 @@ def main():
         if usuario == "Jurandir":
             print("3 - Adicionar item")
             print("4 - Total de vendas do dia")
-        print("5 - Sair")
+            print("5 - Remover item")
+        print("6 - Sair")
         opcao = input("Escolha uma opção: ")
 
         if opcao == '1':
@@ -307,7 +339,9 @@ def main():
         elif opcao == '4' and usuario == "Jurandir":
             dia = input("Digite a data (AAAA-MM-DD): ")
             total_vendas_dia(historico_compras, dia)
-        elif opcao == '5':
+        elif opcao == '5' and usuario == "Jurandir":
+            remover_item(itens_disponiveis),
+        elif opcao == '6':
             print("Saindo...")
             break
         else:
