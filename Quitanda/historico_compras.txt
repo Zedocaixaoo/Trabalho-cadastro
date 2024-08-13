@@ -12,4 +12,7 @@ Condicionador,11.45
 Shampoo (400ml),11.54
 Pasta de Dente,5.55
 Condicionador,11.45
-Pasta de Dente,5.55
+Pasta de Dente,5.552024-08-13 09:07:26,2.45,Cartão de Crédito,joao
+Sabonete,2.45
+2024-08-13 09:13:53,11.54,Cartão de Crédito,joao
+Shampoo (400ml),11.54

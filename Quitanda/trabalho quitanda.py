@@ -74,7 +74,23 @@ def login():
             return dados[0]
     
     print("CPF ou senha incorretos. Tente novamente.\n")
+    temcadastro()
+
     return None
+
+def temcadastro():
+    pergunta = input("você possui um cadastro? (s/n): ")
+    if pergunta.lower() == "s":
+        while True:
+            login()
+            break
+    elif pergunta.lower() == "n":
+        while True:
+            cadastro()
+            break
+    else:
+        print("caractere nao indicado.")
+        temcadastro()
 
 def adicionar_item(itens_disponiveis):
     nome = input("Nome do item: ")
@@ -172,24 +188,34 @@ def sistema_de_compras(itens_disponiveis, historico_compras):
         print("Nenhum item no carrinho.\n")
 
 def exibir_historico(historico_compras, usuario_logado):        
-    
+    compras_usuario = [compra for compra in historico_compras if compra['usuario'] == usuario_logado]
     if usuario_logado == "Jurandir":
        for compra in historico_compras:
-        print(f"Data/Hora: {compra['data_hora']}")
+        print(f"\nData/Hora: {compra['data_hora']}")
         print("Itens comprados:")
         for item in compra['itens']:
             print(f"- {item['nome']} - R${item['preco']:.2f}")
         print(f"Total: R${compra['total']:.2f}")
         print(f"Forma de Pagamento: {compra['forma_pagamento']}\n")
-    else:
-         for compra in historico_compras:
+            
+    elif usuario_logado == login():
+         for compra in compras_usuario:
             if compra['usuario'] == usuario_logado:
-                print(f"Data/Hora: {compra['data_hora']}")
+                print(f"\nData/Hora: {compra['data_hora']}")
                 print("Itens comprados:")
                 for item in compra['itens']:
                     print(f"- {item['nome']} - R${item['preco']:.2f}")
                 print(f"Total: R${compra['total']:.2f}")
                 print(f"Forma de Pagamento: {compra['forma_pagamento']}\n")
+                
+    else:
+        print("\nnenhuma compra realizada ainda. ")
+        
+def adicionar_compra(historico_compras, compra):
+    for c in historico_compras:
+        if c['data_hora'] == compra['data_hora'] and c['usuario'] == compra['usuario']:
+            return
+    historico_compras.append(compra)
 
 def total_vendas_dia(historico_compras, dia):
     total_dia = sum(compra['total'] for compra in historico_compras if compra['data_hora'].startswith(dia))
@@ -220,6 +246,7 @@ def carregar_historico():
                         "data_hora": dados[0],
                         "total": float(dados[1]),
                         "forma_pagamento": dados[2],
+                        "usuario": dados[3],
                         "itens": [],
                     }
                     compra_atual["itens"] = []
