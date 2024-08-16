@@ -101,7 +101,7 @@ def adicionar_item(itens_disponiveis):
             break
         except ValueError:
             print("valor invalido. digite um número decimal (ex: 10.99).")
-    
+
     codigo = str(len(itens_disponiveis) + 1)
     itens_disponiveis[codigo] = {"nome": nome, "preco": preco}
     print(f"item {nome} adicionado com sucesso.\n")
@@ -124,8 +124,9 @@ def remover_item(itens_disponiveis):
         if codigo_remover.lower() == 'sair':
             break
         elif codigo_remover in itens_disponiveis:
-            del itens_disponiveis[codigo_remover]
+            item_nome = itens_disponiveis[str(codigo_remover)]['nome']
             print(f"item {itens_disponiveis[codigo_remover]['nome']} removido com sucesso.\n")
+            del itens_disponiveis[str(codigo_remover)]
             with open("itens.txt", "w") as arquivo:
                 for codigo, item in itens_disponiveis.items():
                     arquivo.write(f"{codigo},{item['nome']},{item['preco']}\n")
@@ -133,7 +134,11 @@ def remover_item(itens_disponiveis):
         else:
             print("Código inexistente. Tente novamente.\n")
 
-def selecionar_pagamento():
+def troco(valor_total, valor_pago):
+    troco = valor_pago - valor_total
+    return troco
+
+def selecionar_pagamento(carrinho):
     print("formas de pagamento disponíveis:")
     print("1 - Dinheiro")
     print("2 - Cartão de Crédito")
@@ -141,10 +146,28 @@ def selecionar_pagamento():
     print("4 - Xerecard")
     print("5 - Boleto Bancário")
     print("6 - Fiado")
-    escolha = input("selecione a forma de pagamento: ") 
+    escolha = input("selecione a forma de pagamento: ")
 
     if escolha == "1":
-        return "Dinheiro"
+        forma_pagamento = "dinheiro"
+        valor_total = sum(item['preco'] for item in carrinho)
+        print(f"valor total da compra: R${valor_total:.2f}")
+        while True:
+            valor_pago_str = input("digite o valor pago em dinheiro: R$ ")
+            try:
+                valor_pago = float(valor_pago_str)
+                break
+            except ValueError:
+                print("craactere inválido, tente novamente.")
+        if valor_pago < valor_total:
+            print("valor pago é menor que o valor total da compra. Tente novamente.")
+        else:
+            troco = valor_pago - valor_total
+            if troco > 0:
+                print(f"troco: R${troco:.2f}\n")
+            print("pagamento realizado com sucesso!")
+            
+        return forma_pagamento
     elif escolha == "2":
         return "Cartão de Crédito"
     elif escolha == "3":
@@ -163,6 +186,33 @@ def selecionar_pagamento():
         dia_pagamento = input("Qual o dia de pagamento? (DD/MM/AAAA): ")
         return fiado_pagamento()
     
+    try:
+        escolha_int = int(escolha)
+        if escolha_int < 1 or escolha_int > 6:
+            print("caractere inválido, tente novamente.")
+            return selecionar_pagamento(carrinho)  
+    except ValueError:
+        print("caractere inválido, tente novamente.")
+        return selecionar_pagamento(carrinho)  
+
+def efetuar_pagamento(itens_disponiveis, carrinho, historico_compras):
+    forma_pagamento = selecionar_pagamento(carrinho)
+    data_hora = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    gente = login()
+    historico_compras = []
+    historico_compras.append({
+        "data_hora": data_hora,
+        "itens": carrinho,
+        "total": sum(item['preco'] for item in carrinho),
+        "forma_pagamento": forma_pagamento,
+        "usuario": gente
+        })
+    print(f"Compra realizada com sucesso. Total: R${sum(item['preco'] for item in carrinho):.2f}, Forma de Pagamento: {forma_pagamento}\n")
+    with open("historico_compras.txt", "a") as arquivo:
+        arquivo.write(f"{data_hora},{sum(item['preco'] for item in carrinho):.2f},{forma_pagamento},{gente}\n")
+        for item in carrinho:
+            arquivo.write(f"{item['nome']},{item['preco']:.2f}\n")
+
 def fiado_pagamento():
             print("Formas de pagamento disponíveis:")
             print("1 - Dinheiro")
@@ -170,7 +220,7 @@ def fiado_pagamento():
             print("3 - Cartão de Débito")
             print("4 - Boleto Bancário")
             
-            escolha = input("Selecione a forma de pagamento: ")
+            escolha = input("selecione a forma de pagamento: ")
 
             if escolha == "1":
                 return "Fiado=Dinheiro"
@@ -185,18 +235,21 @@ def sistema_de_compras(itens_disponiveis, historico_compras):
     carrinho = []
 
     while True:
-        print("Itens disponíveis:")
+        print("itens disponíveis:")
         for codigo, item in itens_disponiveis.items():
             print(f"{codigo} - {item['nome']} - R${item['preco']:.2f}")
 
         escolha = input("digite o código do item que deseja comprar (ou 'sair' para finalizar): ")
         if escolha.lower() == 'sair':
+            if carrinho:
+                forma_pagamento = selecionar_pagamento(carrinho)
+                efetuar_pagamento(itens_disponiveis, carrinho, historico_compras)
             break
         elif escolha in itens_disponiveis:
             carrinho.append(itens_disponiveis[escolha])
             print(f"{itens_disponiveis[escolha]['nome']} adicionado ao carrinho.\n")
         else:
-            print("Código inexistente. Tente novamente.\n")
+            print("código inexistente. Tente novamente.\n")
 
     if carrinho:
         total = sum(item['preco'] for item in carrinho)

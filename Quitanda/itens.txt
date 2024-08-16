@@ -1,5 +1,4 @@
 1,Sabão em Pó (1kg),9.15
-2,Sabonete,2.45
 3,Shampoo (400ml),11.54
 4,Condicionador,11.45
 5,Pasta de Dente,5.55
