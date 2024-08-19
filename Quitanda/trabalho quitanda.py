@@ -12,7 +12,13 @@ def cadastro():
         sys.stdout.flush()
         time.sleep(0.5)  
     print("\n")
-    nome = input("crie um nome de usuario: ")
+    
+    while True:
+        nome = input("crie um nome de usuario: ")
+        if nome.replace(" ", "").isalnum():                #porra de opção que faz a parada de não deixar digitar outra coisa alem de letras ou numeros sozinha
+            break
+        else:
+            print("nome de usuario invalido, use apenas letras ou numeros.")
 
     CPF = ""
     while True:
@@ -79,7 +85,7 @@ def login():
     return None
 
 def temcadastro():
-    pergunta = input("você possui um cadastro? (s/n): ")
+    pergunta = input("você realmente possui um cadastro? (s/n): ")
     if pergunta.lower() == "s":
         while True:
             login()
@@ -138,7 +144,7 @@ def troco(valor_total, valor_pago):
     troco = valor_pago - valor_total
     return troco
 
-def selecionar_pagamento(carrinho):
+def selecionar_pagamento(carrinho, itens_disponiveis):
     print("formas de pagamento disponíveis:")
     print("1 - Dinheiro")
     print("2 - Cartão de Crédito")
@@ -165,9 +171,8 @@ def selecionar_pagamento(carrinho):
             troco = valor_pago - valor_total
             if troco > 0:
                 print(f"troco: R${troco:.2f}\n")
-            print("pagamento realizado com sucesso!")
-            
-        return forma_pagamento
+            print("pagamento realizado com sucesso!\nconfirme seu login\n")
+        return "Dinheiro"
     elif escolha == "2":
         return "Cartão de Crédito"
     elif escolha == "3":
@@ -183,33 +188,29 @@ def selecionar_pagamento(carrinho):
         return "Boleto Bancário"
     elif escolha == "6":
         nota_pagamento = print("O pagamento deve ser realizado no prazo de uma semana!")
-        dia_pagamento = input("Qual o dia de pagamento? (DD/MM/AAAA): ")
-        return fiado_pagamento()
-    
-    try:
+        dia_pagamento = input("Qual o dia de pagamento? (DD/MM/AAAA): ")  
+        return "Fiado"   
+    else:
         escolha_int = int(escolha)
         if escolha_int < 1 or escolha_int > 6:
             print("caractere inválido, tente novamente.")
-            return selecionar_pagamento(carrinho)  
-    except ValueError:
-        print("caractere inválido, tente novamente.")
-        return selecionar_pagamento(carrinho)  
-
+            return selecionar_pagamento(carrinho, itens_disponiveis)  
+     
 def efetuar_pagamento(itens_disponiveis, carrinho, historico_compras):
-    forma_pagamento = selecionar_pagamento(carrinho)
+    forma_pagamento = input("selecione a forma de pagamento: ")
+    total = sum(item['preco'] for item in carrinho)
     data_hora = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     gente = login()
-    historico_compras = []
     historico_compras.append({
         "data_hora": data_hora,
         "itens": carrinho,
-        "total": sum(item['preco'] for item in carrinho),
+        "total": total,
         "forma_pagamento": forma_pagamento,
         "usuario": gente
         })
-    print(f"Compra realizada com sucesso. Total: R${sum(item['preco'] for item in carrinho):.2f}, Forma de Pagamento: {forma_pagamento}\n")
+    print(f"Compra realizada com sucesso. Total: R${total:.2f}, Forma de Pagamento: {forma_pagamento}\n")
     with open("historico_compras.txt", "a") as arquivo:
-        arquivo.write(f"{data_hora},{sum(item['preco'] for item in carrinho):.2f},{forma_pagamento},{gente}\n")
+        arquivo.write(f"{data_hora},{total:.2f},{forma_pagamento},{gente}\n")
         for item in carrinho:
             arquivo.write(f"{item['nome']},{item['preco']:.2f}\n")
 
@@ -242,34 +243,30 @@ def sistema_de_compras(itens_disponiveis, historico_compras):
         escolha = input("digite o código do item que deseja comprar (ou 'sair' para finalizar): ")
         if escolha.lower() == 'sair':
             if carrinho:
-                forma_pagamento = selecionar_pagamento(carrinho)
-                efetuar_pagamento(itens_disponiveis, carrinho, historico_compras)
+                forma_pagamento = selecionar_pagamento(carrinho, itens_disponiveis)
+                total = sum(item['preco'] for item in carrinho)
+                data_hora = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                gente = login()
+                historico_compras.append({
+                    "data_hora": data_hora,
+                    "itens": carrinho,
+                    "total": total,
+                    "forma_pagamento": forma_pagamento,
+                    "usuario": gente
+                    })
+                print(f"Compra realizada com sucesso. Total: R${total:.2f}, Forma de Pagamento: {forma_pagamento}\n")
+                with open("historico_compras.txt", "a") as arquivo:
+                    arquivo.write(f"{data_hora},{total:.2f},{forma_pagamento},{gente}\n")
+                    for item in carrinho:
+                        arquivo.write(f"{item['nome']},{item['preco']:.2f}\n")
+            else:
+                print("nenhum item no carrinho.\n")
             break
         elif escolha in itens_disponiveis:
             carrinho.append(itens_disponiveis[escolha])
             print(f"{itens_disponiveis[escolha]['nome']} adicionado ao carrinho.\n")
         else:
             print("código inexistente. Tente novamente.\n")
-
-    if carrinho:
-        total = sum(item['preco'] for item in carrinho)
-        forma_pagamento = selecionar_pagamento()
-        data_hora = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        gente = login()
-        historico_compras.append({
-            "data_hora": data_hora,
-            "itens": carrinho,
-            "total": total,
-            "forma_pagamento": forma_pagamento,
-            "usuario": gente
-            })
-        print(f"Compra realizada com sucesso. Total: R${total:.2f}, Forma de Pagamento: {forma_pagamento}\n")
-        with open("historico_compras.txt", "a") as arquivo:
-            arquivo.write(f"{data_hora},{total:.2f},{forma_pagamento},{gente}\n")
-            for item in carrinho:
-                arquivo.write(f"{item['nome']},{item['preco']:.2f}\n")
-    else:
-        print("Nenhum item no carrinho.\n")
 
 def exibir_historico(historico_compras, usuario_logado):        
     compras_usuario = [compra for compra in historico_compras if compra['usuario'] == usuario_logado]
@@ -302,8 +299,17 @@ def adicionar_compra(historico_compras, compra):
     historico_compras.append(compra)
 
 def total_vendas_dia(historico_compras, dia):
+    try:
+        data = datetime.datetime.strptime(dia, "%Y-%m-%d")
+        if data > datetime.datetime.now():
+            print("data invalida. o futuro ainda não nos pertence.")
+            return
+    except ValueError:
+        print("data inválida (AAAA-MM-DD) ")
+        return
+
     total_dia = sum(compra['total'] for compra in historico_compras if compra['data_hora'].startswith(dia))
-    print(f"Total de vendas em {dia}: R${total_dia:.2f}\n")
+    print(f"total de vendas em {dia}: R${total_dia:.2f}\n")
 
 def carregar_itens():
     itens_disponiveis = {}
@@ -349,7 +355,7 @@ def main():
     historico_compras = carregar_historico()
 
     print("Quitanda Jurandir")
-    escolha = input("você já tem um cadastro? (s/n): ")
+    escolha = input("você ja tem um cadastro? (s/n): ")
     usuario = None
     if escolha.lower() == 's':
         while True:
@@ -359,7 +365,7 @@ def main():
     elif escolha.lower() == 'n':
         cadastro()
         while True:
-            usuario = login()
+            usuario = ""
             break
     else:
         print("caractere não indicado. ")
@@ -390,7 +396,7 @@ def main():
         elif opcao == '3' and usuario == "Jurandir":
             adicionar_item(itens_disponiveis)
         elif opcao == '4' and usuario == "Jurandir":
-            dia = input("Digite a data (AAAA-MM-DD): ")
+            dia = input("digite a data (AAAA-MM-DD): ")
             total_vendas_dia(historico_compras, dia)
         elif opcao == '5' and usuario == "Jurandir":
             remover_item(itens_disponiveis),
@@ -398,7 +404,7 @@ def main():
             print("Saindo...")
             break
         else:
-            print("Opção inválida ou sem permissão. Tente novamente.\n")
+            print("opçao invalida ou sem permissao. tente novamente.\n")
 
 if __name__ == "__main__":
     main()
