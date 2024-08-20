@@ -236,11 +236,11 @@ def sistema_de_compras(itens_disponiveis, historico_compras):
     carrinho = []
 
     while True:
-        print("itens disponíveis:")
+        print("itens disponiveis:")
         for codigo, item in itens_disponiveis.items():
             print(f"{codigo} - {item['nome']} - R${item['preco']:.2f}")
 
-        escolha = input("digite o código do item que deseja comprar (ou 'sair' para finalizar): ")
+        escolha = input("digite o coodigo do item que deseja comprar (ou 'sair' para finalizar, ou 'r' para remover um item do carrinho): ")
         if escolha.lower() == 'sair':
             if carrinho:
                 forma_pagamento = selecionar_pagamento(carrinho, itens_disponiveis)
@@ -254,7 +254,7 @@ def sistema_de_compras(itens_disponiveis, historico_compras):
                     "forma_pagamento": forma_pagamento,
                     "usuario": gente
                     })
-                print(f"Compra realizada com sucesso. Total: R${total:.2f}, Forma de Pagamento: {forma_pagamento}\n")
+                print(f"\ncompra realizada com sucesso. Total: R${total:.2f}, forma de Pagamento: {forma_pagamento}\n")
                 with open("historico_compras.txt", "a") as arquivo:
                     arquivo.write(f"{data_hora},{total:.2f},{forma_pagamento},{gente}\n")
                     for item in carrinho:
@@ -262,6 +262,25 @@ def sistema_de_compras(itens_disponiveis, historico_compras):
             else:
                 print("nenhum item no carrinho.\n")
             break
+        elif escolha.lower() == 'r':
+            if carrinho:
+                print("itens no carrinho:")
+                for i, item in enumerate(carrinho):
+                    print(f"{i+1} - {item['nome']} - R${item['preco']:.2f}")
+                escolha_remover = input("digite o numero do item que deseja remover (ou 'sair' para cancelar): ")
+                if escolha_remover.lower() == 'sair':
+                    continue
+                try:
+                    indice = int(escolha_remover) - 1
+                    if indice >= 0 and indice < len(carrinho):
+                        del carrinho[indice]
+                        print("item removido com sucesso.\n")
+                    else:
+                        print("indice invalido  tente novamente.\n")
+                except ValueError:
+                    print("caractere invalido  tente novamente.\n")
+            else:
+                print("nenhum item no carrinho.\n")
         elif escolha in itens_disponiveis:
             carrinho.append(itens_disponiveis[escolha])
             print(f"{itens_disponiveis[escolha]['nome']} adicionado ao carrinho.\n")

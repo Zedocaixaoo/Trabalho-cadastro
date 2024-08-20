@@ -27,3 +27,5 @@ Condicionador,11.45
 Papel Higienico (4r),18.90
 Papel Higienico,1.50
 Toalha de Papel (2r),6.70
+2024-08-20 08:49:41,11.54,Dinheiro,Jurandir
+Shampoo (400ml),11.54
