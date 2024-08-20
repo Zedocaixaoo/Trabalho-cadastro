@@ -174,21 +174,40 @@ def selecionar_pagamento(carrinho, itens_disponiveis):
             print("pagamento realizado com sucesso!\nconfirme seu login\n")
         return "Dinheiro"
     elif escolha == "2":
+        print("confirme seu login:\n")
         return "Cartão de Crédito"
     elif escolha == "3":
         return "Cartão de Débito"
     elif escolha == "4":
         dia_pagamento = input("Digite o dia do pagamento (DD/MM/AAAA): ")
         hora_pagamento = input("Digite a hora do pagamento (HH:MM): ")
-        print("local do pagamento ;) :")
+        try:
+            data_pagamento = datetime.datetime.strftime(f"{dia_pagamento}, {hora_pagamento}", "%d/%m/%Y %H:%M")
+        except ValueError:           
+            if data_pagamento < datetime.datetime.now():
+                print("data e hora invalidas, o pagamento deve ser feito no futuro")
+                return selecionar_pagamento(carrinho, itens_disponiveis)
+            
+        print("local do pagamento:")
         print("Endereço: Rua Dr. Creme, 666, Xique-Xique BA.")
         print("Referência: Na Frente do Cemitério de Xique-Xique.")
+        print("\ncofirme seu login\n")
         return "Xerecard"
     elif escolha == "5":
         return "Boleto Bancário"
     elif escolha == "6":
         nota_pagamento = print("O pagamento deve ser realizado no prazo de uma semana!")
         dia_pagamento = input("Qual o dia de pagamento? (DD/MM/AAAA): ")  
+        try:
+            data_pagamento = datetime.datetime.strftime(dia_pagamento, "%d/%m/%Y")
+            if data_pagamento < datetime.datetime.now() or data_pagamento > datetime.datetime.now() + datetime.timedelta(days=7):
+                 print("data invalida, deve ser dentro de uma semana")
+                 return selecionar_pagamento(carrinho, itens_disponiveis)
+        except ValueError:  
+            print("data invalida, dd/mm/aaaa\n")
+            return selecionar_pagamento(carrinho, itens_disponiveis)  
+            
+        print("\nconfirm seu login")
         return "Fiado"   
     else:
         escolha_int = int(escolha)
