@@ -31,3 +31,10 @@ Toalha de Papel (2r),6.70
 Shampoo (400ml),11.54
 2024-08-20 09:10:52,9.15,Cartão de Crédito,Jurandir
 Sabão em Pó (1kg),9.15
+2024-08-20 10:21:46,22.99,Dinheiro,luan
+Shampoo (400ml),11.54
+Condicionador,11.45
+2024-08-20 10:32:55,9.15,Fiado,Jurandir
+Sabão em Pó (1kg),9.15
+2024-08-20 10:48:57,18.01,Boleto Bancário,edwin
+Abobora,18.01

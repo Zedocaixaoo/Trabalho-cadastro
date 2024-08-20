@@ -6,4 +6,4 @@
 7,Papel Higienico (4r),18.9
 8,Papel Higienico,1.5
 9,Toalha de Papel (2r),6.7
-10,Detergente Liquido (500ml),2.5
+10,Abobora,18.01

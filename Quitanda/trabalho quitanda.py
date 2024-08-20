@@ -196,10 +196,10 @@ def selecionar_pagamento(carrinho, itens_disponiveis):
     elif escolha == "5":
         return "Boleto Bancário"
     elif escolha == "6":
-        nota_pagamento = print("O pagamento deve ser realizado no prazo de uma semana!")
+        nota_pagamento = print("O pagamento deve ser realizado no prazo de uma semana\n")
         dia_pagamento = input("Qual o dia de pagamento? (DD/MM/AAAA): ")  
         try:
-            data_pagamento = datetime.datetime.strftime(dia_pagamento, "%d/%m/%Y")
+            data_pagamento = datetime.datetime.strptime(dia_pagamento, "%d/%m/%Y")
             if data_pagamento < datetime.datetime.now() or data_pagamento > datetime.datetime.now() + datetime.timedelta(days=7):
                  print("data invalida, deve ser dentro de uma semana")
                  return selecionar_pagamento(carrinho, itens_disponiveis)
