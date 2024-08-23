@@ -66,23 +66,52 @@ def login():
     else:
         print("CPF inválido. digite novamente.")
         return None
-    senha = input("Senha: ")
 
-    hash_senha = hashlib.sha256(senha.encode()).hexdigest()
+    tentativas_erradas = 0
+    while True:
+        senha = input("senha: ")
+        hash_senha = hashlib.sha256(senha.encode()).hexdigest()
 
-    with open("usuarios.txt", "r") as arquivo:
-        linhas = arquivo.readlines()
+        with open("usuarios.txt", "r") as arquivo:
+            linhas = arquivo.readlines()
 
-    for linha in linhas:
-        dados = linha.strip().split(',')
-        if dados[1] == CPF and dados[2].strip() == hash_senha:
-            print(f"Bem-vindo {dados[0]}!\n")
-            return dados[0]
+        for linha in linhas:
+            dados = linha.strip().split(',')
+            if dados[1] == CPF and dados[2].strip() == hash_senha:
+                print(f"Bem-vindo {dados[0]}!\n")
+                return dados[0]
+
+        tentativas_erradas += 1
+        if tentativas_erradas == 5:
+            resposta = input("esqueceu sua senha? (s/n): ")
+            if resposta.lower() == 's':
+                redefinir_senha(CPF)
+                return login()
+            elif resposta.lower() == 'n':
+                login()
+            else:
+                print("caractere não indicado.")
+                continue
+        print("CPF ou senha incorretos. Tente novamente.\n")
+         
+        temcadastro()
+        return None
     
-    print("CPF ou senha incorretos. Tente novamente.\n")
-    temcadastro()
+def redefinir_senha(CPF):
+    nova_senha = input("\ndigite a nova senha: ")
+    hash_nova_senha = hashlib.sha256(nova_senha.encode()).hexdigest()
 
-    return None
+    with open("usuarios.txt", "r+") as arquivo:
+        linhas = arquivo.readlines()
+        arquivo.seek(0)
+        for linha in linhas:
+            dados = linha.strip().split(',')
+            if dados[1] == CPF:
+                linha = f"{dados[0]},{CPF},{hash_nova_senha}\n"
+            arquivo.write(linha)
+        arquivo.truncate()
+
+    print("senha redefinida com sucesso\n")
 
 def temcadastro():
     pergunta = input("você realmente possui um cadastro? (s/n): ")
@@ -420,25 +449,30 @@ def main():
         print("\nMenu:")
         print("1 - Fazer compra")
         print("2 - Exibir histórico de compras")
+        print("3 - Catalogo de produtos")
         if usuario == "Jurandir":
-            print("3 - Adicionar item")
-            print("4 - Total de vendas do dia")
-            print("5 - Remover item")
-        print("6 - Sair")
+            print("4 - Adicionar item")
+            print("5 - Total de vendas do dia")
+            print("6 - Remover item")
+        print("7 - Sair")
         opcao = input("Escolha uma opção: ")
 
         if opcao == '1':
             sistema_de_compras(itens_disponiveis, historico_compras)
         elif opcao == '2':
             exibir_historico(historico_compras, usuario)
-        elif opcao == '3' and usuario == "Jurandir":
-            adicionar_item(itens_disponiveis)
+        elif opcao == '3':
+            print("catalogo de produtos:")
+            for codigo, item in itens_disponiveis.items():
+                print(f"{codigo}, {item['nome']}, R${item['preco']:.2f}")
         elif opcao == '4' and usuario == "Jurandir":
+            adicionar_item(itens_disponiveis)
+        elif opcao == '5' and usuario == "Jurandir":
             dia = input("digite a data (AAAA-MM-DD): ")
             total_vendas_dia(historico_compras, dia)
-        elif opcao == '5' and usuario == "Jurandir":
+        elif opcao == '6' and usuario == "Jurandir":
             remover_item(itens_disponiveis),
-        elif opcao == '6':
+        elif opcao == '7':
             print("Saindo...")
             break
         else:
