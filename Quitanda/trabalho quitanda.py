@@ -68,6 +68,7 @@ def login():
         return None
 
     tentativas_erradas = 0
+
     while True:
         senha = input("senha: ")
         hash_senha = hashlib.sha256(senha.encode()).hexdigest()
@@ -82,19 +83,20 @@ def login():
                 return dados[0]
 
         tentativas_erradas += 1
+        print("CPF ou senha incorretos. Tente novamente.\n")
         if tentativas_erradas == 5:
             resposta = input("esqueceu sua senha? (s/n): ")
             if resposta.lower() == 's':
                 redefinir_senha(CPF)
-                return login()
+                break
             elif resposta.lower() == 'n':
+                tentativas_erradas = 0
                 login()
             else:
                 print("caractere não indicado.")
+                tentativas_erradas = 0
                 continue
-        print("CPF ou senha incorretos. Tente novamente.\n")
          
-        temcadastro()
         return None
     
 def redefinir_senha(CPF):
