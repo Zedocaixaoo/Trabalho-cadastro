@@ -58,13 +58,16 @@ def adicionar_usuario():
             return
 
 def login():
+    print("\nCaso tenha entrado sem querer digite 'sair'")
     CPF = input("digite seu CPF (XXX.XXX.XXX-XX): ")
     CPF = CPF.replace('.', '').replace('-', '')
     if CPF.isdigit() and len(CPF) == 11:
         CPF_formatado = "{}.{}.{}-{}".format(CPF[:3], CPF[3:6], CPF[6:9], CPF[9:])
         print("CPF:", CPF_formatado)
+    elif CPF.lower() == 'sair':
+        temcadastro()
     else:
-        print("CPF inválido. digite novamente.")
+        print("CPF ou opção invalida. digite novamente.")
         return None
 
     tentativas_erradas = 0
@@ -84,20 +87,19 @@ def login():
 
         tentativas_erradas += 1
         print("CPF ou senha incorretos. Tente novamente.\n")
-        if tentativas_erradas == 5:
+
+        if tentativas_erradas >= 5:
             resposta = input("esqueceu sua senha? (s/n): ")
             if resposta.lower() == 's':
                 redefinir_senha(CPF)
-                break
+                return login()
             elif resposta.lower() == 'n':
                 tentativas_erradas = 0
-                login()
+                continue
             else:
                 print("caractere não indicado.")
                 tentativas_erradas = 0
                 continue
-         
-        return None
     
 def redefinir_senha(CPF):
     nova_senha = input("\ndigite a nova senha: ")
@@ -118,13 +120,11 @@ def redefinir_senha(CPF):
 def temcadastro():
     pergunta = input("você realmente possui um cadastro? (s/n): ")
     if pergunta.lower() == "s":
-        while True:
             login()
-            break
+            return
     elif pergunta.lower() == "n":
-        while True:
             cadastro()
-            break
+            return
     else:
         print("caractere nao indicado.")
         temcadastro()
